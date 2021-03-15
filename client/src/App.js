@@ -5,7 +5,7 @@ import Navbar from "./Components/Layout/Navbar"
 import Home from "./Components/pages/Home"
 import About from "./Components/pages/About"
 import Register from './Components/auth/Register';
-//import Login from './components/auth/Login';
+//import Login from './components/auth/Login';working on it
 import ContactState from './context/contact/ContactState';
 import AuthState from './context/auth/authState';
 const  App= ()=> {
