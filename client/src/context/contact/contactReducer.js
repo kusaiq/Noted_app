@@ -8,19 +8,30 @@ import {
 	FILTER_CONTACTS,
 	CLEAR_CONTACTS,
 	CLEAR_FILTER,
+	CONTACT_ERRORS
 
 } from '../types';
 export default (state, action) => {
 	switch (action.type) {
+		case GET_CONTACTS:
+			return {
+				...state,
+				contacts:  action.payLoad,//we cant just change contacts state i imutable so we have to copy whats in the state 
+				loading: false
+			};
 		case ADD_CONTACT:
 			return {
 				...state,
-				contacts: [...state.contacts, action.payLoad]//we cant just change contacts state i imutable so we have to copy whats in the state 
+				contacts: [...state.contacts, action.payLoad],//we cant just change contacts state i imutable so we have to copy whats in the state 
+				//another note about the above code if we want whenever we add a conatact to be added in the beginning (top )
+				//simply swith [...action.payLoad, state.contacts]
+				loading: false
 			};
 		case DELETE_CONTACT:
 			return {
 				...state,
-				contacts : state.contacts.filter(contact => contact.id !== action.payLoad)
+				contacts: state.contacts.filter(contact => contact._id !== action.payLoad),
+				loading: false
 			};
 		case SET_CURRENT:
 			return {
@@ -35,8 +46,10 @@ export default (state, action) => {
 		case UPDATE_CONTACT:
 			return {
 				...state,
-				contacts: state.contacts.map(contact => contact.id == action.payLoad.id ?
-					action.payLoad : contact)
+				contacts: state.contacts.map(contact =>
+					contact._id == action.payLoad._id ?
+					action.payLoad : contact),
+				loading: false
 			};
 		case FILTER_CONTACTS:
 			return {
@@ -50,6 +63,11 @@ export default (state, action) => {
 			return {
 				...state,
 				filtered: null
+			};
+		case CONTACT_ERRORS:
+			return {
+				...state,
+				error: action.payLoad
 			};
 		default:
 			return state;

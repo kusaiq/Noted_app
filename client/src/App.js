@@ -1,29 +1,46 @@
 import React, { Fragment} from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import './App.css'
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Navbar from "./Components/Layout/Navbar"
+import Alerts from "./Components/Layout/Alerts"
 import Home from "./Components/pages/Home"
-import About from "./Components/pages/About"
 import Register from './Components/auth/Register';
-//import Login from './components/auth/Login';working on it
+import Login from './Components/auth/Login';
 import ContactState from './context/contact/ContactState';
 import AuthState from './context/auth/authState';
-const  App= ()=> {
+import AlertState from './context/alert/AlertState';
+import PrivateRoute from './Components/routing/PrivateRoute';
+import setAuthToken from './utils/setAuthToken';
+
+import './App.css';
+
+if (localStorage.token) {
+    setAuthToken(localStorage.token);
+}
+const App = () => {
+
     return (
         <AuthState>
             <ContactState>
+                <AlertState>
         <Router>
             <Fragment >
-                <Navbar />
+                            <Navbar />
+                            <div className="container">
+                                <Alerts />
                 <Switch>
-                    <div className="container">
-                    <Route exact path='/' component={Home}/>
-                                <Route exact path='/about' component={About} />
+                                
+                                        
+                                    <PrivateRoute  exact path='/' component={Home}/>
                                 <Route exact path='/register' component={Register}/>
-                        </div>
-                    </Switch>
+                                    <Route exact path='/login' component={Login} />
+                                
+                                </Switch>
+                            </div>
+                                 
             </Fragment>
-                </Router>
+                    </Router>
+                    </AlertState>
                 </ContactState>
             </AuthState>
 

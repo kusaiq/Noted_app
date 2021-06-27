@@ -1,12 +1,16 @@
 import React, { useState, useContext, useEffect } from 'react';
 import AuthContext from '../../context/auth/authContext';
+import AlertContext from '../../context/alert/alertContext';
 
-const Register = () => {
+
+const Register = (props) => {
 
     const authContext = useContext(AuthContext);
+    const alertContext = useContext(AlertContext);
 
-    const { Register } = authContext
-
+    const { Register, error, isAuthenticated } = authContext
+    const { setAlert } = alertContext
+ 
     const [user, setUser] = useState({
         name: "",
         email: "",
@@ -15,18 +19,34 @@ const Register = () => {
     })  
     const { name, email, password, password2 } = user;
 
+    useEffect(() => {
+        if (localStorage.isAuthenticated  ) {
+            //redirect to the main page if logged in 
+            props.history.push('/')
+        }
+        if (error != null) {
+            setAlert(error, 'danger', '5000');
+        } //the next comment is not a normal comment it removes the alert message 
+        // eslint-disable-next-line
+    }, [error, isAuthenticated, props.history])
+
     const onChange = e =>
         setUser({ ...user, [e.target.name]: e.target.value }) 
 
-    const onSubmit = (event) => {
-        event.preventDefault();
-        Register({
-            name,
-            email,
-            password
-        });
-        
-    }
+    const onSubmit = e => {
+        e.preventDefault();
+        if (name === '' || email === '' || password === '') {
+            setAlert('Please enter all fields', 'danger','5000');
+        } else if (password !== password2) {
+            setAlert('Passwords do not match', 'danger','5000');
+        } else {
+            Register({
+                name,
+                email,
+                password
+            });
+        } 
+    };
 
     return (
 
@@ -44,7 +64,7 @@ const Register = () => {
                 name="name"
                 value={name}
                 onChange={onChange}
-                required
+               
                 />
             </div>
 
@@ -55,7 +75,7 @@ const Register = () => {
                 name="email"
                  value={email}
                 onChange={onChange}
-                required
+                //required
             />
             </div>
 
@@ -66,7 +86,7 @@ const Register = () => {
                 name="password"
                 value={password}
                 onChange={onChange}
-                required
+               // required
                 minLength='6'
                 />
             </div>
@@ -84,7 +104,7 @@ const Register = () => {
                 name="password2"
                 value={password2}
                 onChange={onChange}
-                required
+               // required
                 minLength='6'
                 />
                 </div>

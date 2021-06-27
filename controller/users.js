@@ -1,6 +1,7 @@
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
 const errorResponse = require('../utils/errorResponse');
+const jwt = require('jsonwebtoken');
 
 //dsc
 //register a user
@@ -18,10 +19,10 @@ exports.register = asyncHandler(async (req, res, next) => {
        
     });
     //create token 
-    const token =user.getSignedJwtToken();//its imortant that is a lower case because it not a static method
-    res.status(200).json({token})
+    //const token =user.getSignedJwtToken();//its imortant that is a lower case because it not a static method
+   // res.status(200).json({token})
     //i commented the above code cuz we gonna use cookies
-
+    sendTokenResponse(user, 200, res);
 });
 
 //dsc
@@ -41,7 +42,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     const user = await User.findOne({ email }).select('+password');//the meaning behind the .select
     //is in our model we write that the password select is false so we cant access it 
     if (!user) {
-        return next(new errorResponse(`ivalid crotential ${req.params.id}`, 401));//401 means its unautherized
+        return next(new errorResponse(`invalid crotential ${req.params.id}`, 401));//401 means its unautherized
     }
     //FOR THE PASSWORD WE GONNA HAVE TO TAKE THE PLANE TEXT PASSWORD AND compare it
     //to the encrypted password
@@ -49,17 +50,18 @@ exports.login = asyncHandler(async (req, res, next) => {
     const ismatched = await user.matchPasswors(password);//the reason we are using await is becuz we are using 
     //bcrypt witch is in fact is a promise
     if (!ismatched) {
-        return next(new errorResponse(`ivalid crotential ${req.params.id}`, 401));
+        return next(new errorResponse(`invalid crotential ${req.params.id}`, 401));
+        
     }
 
-    const token =user.getSignedJwtToken();//its imortant that is a lower case because it not a static method
-   res.status(200).json({success:true,token})
-    
+    //const token =user.getSignedJwtToken();//its imortant that is a lower case because it not a static method
+   //res.status(200).json({success:true,token})
+    sendTokenResponse(user, 200, res);
 });
 
 //dsc
 //user info
-// route get /api/v1/auth/register
+// route get /api/v1/auth/getMe
 // access private
 exports.getMe = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user.id);//since we are using the protect middleware we always 
@@ -76,7 +78,7 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/auth/logout
 // @access    Private
 exports.logout = asyncHandler(async (req, res, next) => {
-    res.cookie('token', 'none', {//set token to none and we gonna set it to expire in like 10 sec
+    res.cookie('token', 'null', {//set token to none and we gonna set it to expire in like 10 sec
         expires: new Date(Date.now() + 10 * 1000),
         httpOnly: true
     });
@@ -86,3 +88,41 @@ exports.logout = asyncHandler(async (req, res, next) => {
         data: {}
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+// Get token from model, create cookie and send response
+    const sendTokenResponse = (user, statusCode, res) => {
+    // Create token
+    const token = user.getSignedJwtToken();
+
+    const options = {
+      expires: new Date(
+       Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000//when dose the cookie expire now this code 
+        //was wriiten this way cuz we cant write it in days like jwt
+      //its actually in sec so we had to do that
+      ),
+      httpOnly: true
+    };
+
+ if (process.env.NODE_ENV === 'production') {
+    options.secure = true;//it will be https you know we can ignore that
+  }
+
+  res
+    .status(statusCode)
+      .cookie('token', token, options)//.cookie takes a key value witch is token
+    //takes a value witch is token and the options
+    .json({
+      success: true,
+      token
+    });
+  };

@@ -1,24 +1,47 @@
 import React, { useState, useContext, useEffect } from 'react';
 import AuthContext from '../../context/auth/authContext';
+import AlertContext from '../../context/alert/alertContext';
 
-const Login = () => {
+const Login = (props) => {
 
     const authContext = useContext(AuthContext);
+    const alertContext = useContext(AlertContext);
 
-    const { login } = authContext
+    const { Login, error, isAuthenticated, clearErrors} = authContext;
+    const { setAlert } = alertContext
+    
 
     const [auth, setAuth] = useState({
         email: '',
-        password: "",
+        password: ""
     })
     const {  email, password  } = auth;
+    useEffect(() => {
+        if (localStorage.getItem('isAuthenticated') ) {
+            //redirect to the main page if logged in 
+            props.history.push('/')
+        }
+        if (error  ) {
+            setAlert(error, 'danger', '5000');
+            clearErrors();
+        }
+    }, [error, isAuthenticated, props.history])
 
     const onChange = e =>
         setAuth({ ...auth, [e.target.name]: e.target.value })
 
-    const onSubmit = (event) => {
-        event.preventDefault();
-    }
+    const onSubmit = e => {
+        e.preventDefault();
+        if (email === '' || password === '') {
+            setAlert('Please enter all fields', 'danger', '5000');
+        } else {
+            Login({
+                name,
+                email,
+                password
+            });
+        }
+    };
 
     return (
 
@@ -34,7 +57,7 @@ const Login = () => {
                     name="email"
                     value={email}
                     onChange={onChange}
-                    required
+                  
                 />
             </div>
 
@@ -45,7 +68,7 @@ const Login = () => {
                     name="password"
                     value={password}
                     onChange={onChange}
-                    required
+                    
                     minLength='6'
                 />
             </div>
