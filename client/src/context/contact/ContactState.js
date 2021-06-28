@@ -1,4 +1,4 @@
-import react, { useReducer} from 'react'
+import React, { useReducer} from 'react'
 import ContactCondext from './contactContext';
 import contactReducer from './contactReducer';
 import axios from 'axios';

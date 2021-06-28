@@ -1,8 +1,8 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Contacts from '../contact/contacts';
 import ContactForm from '../contact/contactForm';
 import ContactFilter from '../contact/contactFilter';
-import setAuthToken from '../../utils/setAuthToken';
+
 
 const Home = (props) => {
 
