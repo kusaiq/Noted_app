@@ -13,6 +13,10 @@
   },
   "author": "kusai",
   "license": "ISC",
+  "engines": {
+    "node": "12.18.0",
+    "npm": "7.19.0"
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
