@@ -36,7 +36,6 @@ const Login = (props) => {
             setAlert('Please enter all fields', 'danger', '5000');
         } else {
             Login({
-                name,
                 email,
                 password
             });

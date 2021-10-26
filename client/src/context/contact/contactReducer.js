@@ -33,6 +33,14 @@ export default (state, action) => {
 				contacts: state.contacts.filter(contact => contact._id !== action.payLoad),
 				loading: false
 			};
+		case CLEAR_CONTACTS:
+			return {
+				...state,
+				contacts: null,
+				filtered: null,
+				error: null,
+				current: null
+			};
 		case SET_CURRENT:
 			return {
 				...state,
@@ -47,7 +55,7 @@ export default (state, action) => {
 			return {
 				...state,
 				contacts: state.contacts.map(contact =>
-					contact._id == action.payLoad._id ?
+					contact._id === action.payLoad._id ?
 					action.payLoad : contact),
 				loading: false
 			};

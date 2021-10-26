@@ -1,6 +1,6 @@
 const errorResponse = require('../utils/errorResponse');//I say what the error is
 const asyncHandler = require('../middleware/async');
-const Contact = require('../models/Contacts');
+const Contact = require('../Models/Contacts');
 
 
 //shows all contacts

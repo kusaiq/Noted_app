@@ -39,9 +39,10 @@ export default (state, action) => {
 			localStorage.removeItem("user");
 			return {
 				...state,
-				token: null,
+				token: localStorage.getItem("token"),
+				isAuthenticated: localStorage.getItem("isAuthenticated"),
 				error: action.payLoad,
-				loading: false,
+				loading: true,
 				user: null,
 			};
 		case CLEAR_ERRORS:
